@@ -1,8 +1,12 @@
-public/
+# Build output
+/public
+
+# System
 .DS_Store
+
+# Env
 .env
 
-# Large static assets (reference content - add back only what you need)
-static/assets/files/
-static/assets/img/
-ref-temp/
+# Large assets (optional - remove to include)
+/static/assets/files/
+/static/assets/img/
