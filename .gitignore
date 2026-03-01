@@ -1,0 +1,8 @@
+public/
+.DS_Store
+.env
+
+# Large static assets (reference content - add back only what you need)
+static/assets/files/
+static/assets/img/
+ref-temp/
