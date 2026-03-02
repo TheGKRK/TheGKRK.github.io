@@ -29,6 +29,8 @@ menu = [
     { name = "CV", url = "/cv", weight = 2 },
     { name = "Archive", url = "/archive", weight = 3 },
     { name = "Tags", url = "/tags", weight = 4 },
+    { name = "HFT", url = "/hft", weight = 5 },
+    { name = "Blockchain", url = "/blockchain", weight = 6 },
 ]
 
 
