@@ -8,7 +8,7 @@ insert_anchor_links = "none"
 
 # Kiran Kumar
 
-+91 7989482118 | [gangakiran07@gmail.com](mailto:gangakiran07@gmail.com) | [Twitter](https://twitter.com/Kirank279) | [GitHub](https://github.com/KiranKBR) | [Blog](https://supra.com/documents/Supra-HyperNova-Whitepaper.pdf) | [LinkedIn](https://www.linkedin.com/in/kiran-kumar-30455013b/)
+ [Twitter](https://twitter.com/Kirank279) | [GitHub](https://github.com/KiranKBR) | [LinkedIn](https://www.linkedin.com/in/kiran-kumar-30455013b/) | [gangakiran07@gmail.com](mailto:gangakiran07@gmail.com) | +91 7989482118 
 
 </div>
 
@@ -91,39 +91,35 @@ Experienced in researching and working with **EVM internals**, **light clients**
 
 ## Projects
 
-### **HyperNova Bridge (Supra)**
+### **[HyperNova Bridge (Supra)](https://supranova.ai/)**
 
 * Production-grade **trustless bridge** deployed on mainnet (**ETH↔SUPRA, BSC↔SUPRA, and reverse bridges**).
 * Focus on research, design, security, performance, and correctness.
 * Tech: Rust, Cryptography
 
-### **Supra Oracles**
+### **[Supra Oracles](https://github.com/KiranBKL/supra_oracles)**
 
 * Multi-socket oracle listener aggregating price feeds.
 * Signature verification and averaging logic.
 * Tech: Rust, Tokio, WebSockets, ECDSA
-  GitHub: [https://github.com/KiranBKL/supra_oracles](https://github.com/KiranBKL/supra_oracles)
 
-### **OHLC (Rust Crate)**
+### **[OHLC](https://github.com/KiranBKL/ohlc)**
 
 * Rolling OHLC computation for price streams.
 * Designed for efficiency and correctness.
 * Tech: Rust
-  GitHub: [https://github.com/KiranBKL/ohlc](https://github.com/KiranBKL/ohlc)
 
-### **GroundKart**
+### **[GroundKart](https://github.com/KiranBKL/groundkart)**
 
 * E-commerce platform for sports equipment.
 * Backend-focused design with REST APIs.
 * Tech: Rust, Actix, Diesel ORM, PostgreSQL
-  GitHub: [https://github.com/KiranBKL/groundkart](https://github.com/KiranBKL/groundkart)_
 
-### **Trading Engine**
+### **[Trading Engine](https://github.com/KiranBKL/trading-engine)**
 
 * Simple trading engine built in Rust.
 * Focus on core matching and performance.
 * Tech: Rust
-  GitHub: [https://github.com/KiranBKL/trading-engine](https://github.com/KiranBKL/trading-engine)
 
 ---
 
@@ -135,31 +131,12 @@ CGPA: **8.4**
 
 ---
 
-## Certifications
-
-* Smart Contract Hacking — JohnnyTime
-* Rust Programming: Beginner to Expert — Udemy
-* Full-Stack Blockchain Development — Code Eater
-* Oracle Certified Associate — Java SE 8
-* Machine Learning Using Python — APSSDC
-* Data Analysis Using Python — APSSDC
-
----
-
-## Achievements
-
-* 2nd Place — Competitive Programming, Abhiyanth 2K19
-* 1st Place — Treasure Hunt, Abhiyanth 2K17
-* 3rd Place — AP State Level Chekumuki Science Talent Test (2016)
-
----
-
-## Languages
-
-English, Telugu, Kannada, Hindi
-
----
 
 ## Interests
 
-Blockchain Security, Protocol Research, Coding, Auditing, Football, Cricket, Reading
+Blockchain Security  
+Engineering with Rust  
+Blockchain Interoperability  
+Cryptography  
+Zero Knowledge Proofs  
+Web3 Development
