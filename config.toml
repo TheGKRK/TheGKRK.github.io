@@ -30,18 +30,15 @@ menu = [
     { name = "Archive", url = "/archive", weight = 3 },
     { name = "Tags", url = "/tags", weight = 4 },
 ]
-socials = [
-    { name = "github", url = "https://github.com/TheGKRK/", icon = "github" },
-    { name = "twitter", url = "https://x.com/TheGKRK/", icon = "twitter" },
-    { name = "linkedin", url = "https://linkedin.com/in/thegkrk/", icon = "linkedin" },
-    { name = "Email", url = "mailto: your@email.com", icon = "email" }
-]
+
+
+
 custom_css = []
 
 
 [extra.analytics]
-enabled = false
+enabled = true
 
 [extra.analytics.goatcounter]
-user = "thegkrk"
+user = "TheGKRK"
 host = "goatcounter.com" # default= goatcounter.com

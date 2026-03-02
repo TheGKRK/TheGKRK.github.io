@@ -1,5 +1,8 @@
 +++
-title = "TheGKRK Blog"
-template = "homepage.html"
-insert_anchor_links = "nonea"
+title = "Writings"
+template = "section.html"
+insert_anchor_links = "none"
+
+[extra]
+section_path = "writings/_index.md"
 +++
