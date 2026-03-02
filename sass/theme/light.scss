@@ -3,8 +3,8 @@ $bg-1: darken($bg-0, 2%);
 $bg-2: darken($bg-1, 8%);
 $bg-3: #eee;
 
-$text-0: #78DCE8;
-$text-1: rgb(218, 218, 219);
+$text-0: darken($bg-0, 87%);
+$text-1: darken($bg-0, 60%);
 
 :root.light {
   --text-0: #{$text-0};
@@ -17,7 +17,7 @@ $text-1: rgb(218, 218, 219);
 
   --border-color: var(--bg-2);
 
-  --primary-color: #78DCE8;
+  --primary-color: #428bca;
   --hover-color: var(--text-0);
  
 }
