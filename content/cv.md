@@ -1,3 +1,9 @@
++++
+title = "Curriculum Vitae"
+template = "cv.html"
+insert_anchor_links = "none"
++++
+
 <div style="text-align:center;">
 
 # Kiran Kumar
