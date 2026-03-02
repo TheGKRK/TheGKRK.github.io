@@ -1,5 +1,5 @@
 base_url = "https://TheGKRK.github.io/"
-title = "TheGKRK Blog"
+title = "TheGKRK "
 description = ""
 build_search_index = false
 generate_feeds = true
@@ -27,11 +27,10 @@ katex_auto_render = true
 repo_url = "https://github.com/TheGKRK/TheGKRK.github.io/"
 menu = [
     { name = "CV", url = "/cv", weight = 2 },
-    { name = "Blockchain", url = "/blockchain", weight = 6 },
-    { name = "HFT", url = "/hft", weight = 5 },
-    { name = "Archive", url = "/archive", weight = 3 },
-    { name = "Tags", url = "/tags", weight = 4 },
-
+    { name = "HFT", url = "/hft", weight = 3 },
+    { name = "Blockchain", url = "/blockchain", weight = 4 },
+    { name = "Archive", url = "/archive", weight = 5 },
+    { name = "Tags", url = "/tags", weight = 6 },
 ]
 
 
