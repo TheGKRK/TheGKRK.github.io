@@ -109,7 +109,7 @@ Experienced in researching and working with **EVM internals**, **light clients**
 * Designed for efficiency and correctness.
 * Tech: Rust
 
-### **[GroundKart](https://github.com/KiranBKL/groundkart)**
+### **[GroundKart](https://github.com/KiranBKL/groundkart_)**
 
 * E-commerce platform for sports equipment.
 * Backend-focused design with REST APIs.
