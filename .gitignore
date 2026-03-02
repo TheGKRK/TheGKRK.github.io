@@ -1,12 +1,3 @@
-# Build output
-/public
-
-# System
+public/
 .DS_Store
-
-# Env
 .env
-
-# Large assets (optional - remove to include)
-/static/assets/files/
-/static/assets/img/
