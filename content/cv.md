@@ -8,7 +8,7 @@ insert_anchor_links = "none"
 
 # Kiran Kumar
 
- [Twitter](https://twitter.com/Kirank279) | [GitHub](https://github.com/KiranKBR) | [LinkedIn](https://www.linkedin.com/in/kiran-kumar-30455013b/) | [gangakiran07@gmail.com](mailto:gangakiran07@gmail.com) | +91 7989482118 
+ [Twitter](https://twitter.com/Kirank279) | [GitHub](https://github.com/TheGKRK) | [LinkedIn](https://www.linkedin.com/in/kiran-kumar-30455013b/) | [gangakiran07@gmail.com](mailto:gangakiran07@gmail.com) | +91 7989482118 
 
 </div>
 
@@ -27,8 +27,8 @@ Experienced in researching and working with **EVM internals**, **light clients**
 ### **Supra — Senior Blockchain Engineer**
 
 *Sep 2024 – Present*
+* Built the **first trustless bridge with MoveVM as the destination execution environment [(HyperNova)](https://supranova.ai/)**, leading end-to-end research and development for the BSC↔SUPRA bridge.
 
-* Led research and development of **HyperNova bridge (mainnet)** — the **first trustless bridge with MoveVM as the destination execution environment**.
 * Conducted in-depth research on **EVM execution**, **light clients**, and **Ethereum sync committees** to inform protocol and system design.
 * Prototyped and built **HyperNova end-to-end**, translating research into a **production-grade interoperability system**.
 * Wrote the **entire Rust codebase independently**, owning core logic, networking, cryptography integration, and performance-critical paths.
@@ -39,10 +39,11 @@ Experienced in researching and working with **EVM internals**, **light clients**
 * Performed **security review and auditing of Move smart contracts**, focusing on correctness, invariants, and attack surface reduction.
 * Designed and executed **comprehensive testing strategies** for bridge components, including **unit tests, invariant tests, fuzzing, and end-to-end (E2E) tests** under adversarial conditions.
 * Contributed to extending **Supra’s Move layer** by implementing **native functions** required to support bridge operations efficiently and safely.
+* Refactored **MoveVM native code** to make the chain compatible with bridge operations.
 
 ---
 
-### **Blockchain Security Academy (JohnnyTime) — Security Researcher(H4X0R)**
+### **Blockchain Security Academy (JohnnyTime) — Security Researcher**
 
 *Jan 2024 – Present*
 
