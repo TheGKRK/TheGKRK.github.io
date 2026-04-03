@@ -41,6 +41,8 @@ Experienced in researching and working with **EVM internals**, **light clients**
 * Contributed to extending **Supra’s Move layer** by implementing **native functions** required to support bridge operations efficiently and safely.
 * Refactored **MoveVM native code** to make the chain compatible with bridge operations.
 
+**Skills:** Cryptography, Rust, EVM and lightclients, Move, Solidity, RabbitMQ
+
 ---
 
 ### **Blockchain Security Academy (JohnnyTime) — Security Researcher**
@@ -65,7 +67,7 @@ Experienced in researching and working with **EVM internals**, **light clients**
 * Developed and maintained **critical payment flows**, including mandates, crypto payments, vaulted payments, disputes, and payouts.
 * Worked on the **migration of UPI code from Haskell to Rust**, preserving functional correctness while improving performance and operational efficiency.
 
-**Tech Stack:** Rust, Actix, Redis, Diesel ORM, PostgreSQL, Haskell, Presto, Java, Git
+**Tech Stack:** Rust, Tokio, PostgreSQL, Haskell, AWS, Redis
 
 ---
 
@@ -77,7 +79,7 @@ Experienced in researching and working with **EVM internals**, **light clients**
 * Developed and maintained **backend services and web applications** in regulated, enterprise environments.
 * Collaborated with cross-functional teams to deliver features and support production systems.
 
-**Tech Stack:** Java, Spring Boot, Hibernate, JSP, Servlets, MySQL, Bootstrap
+**Skills:** Java, Spring Boot, Hibernate, JSP, Servlets, MySQL, Bootstrap
 
 ---
 
