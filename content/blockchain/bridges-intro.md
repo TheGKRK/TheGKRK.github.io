@@ -1,6 +1,6 @@
 +++
 title = "Cross-Chain Bridges: What They Are and How They Work"
-date = 2026-04-21
+date = 2026-04-23
 description = "A ground-up introduction to cross-chain bridges - why they exist, the trust models that separate them, and a deep dive into sync committees and the SupraNova light-client bridge architecture."
 [taxonomies]
 tags = ["blockchain", "bridges", "interoperability", "cross-chain", "ethereum", "hypernova"]
@@ -212,7 +212,7 @@ Knowing what sync committees are is one thing. Building a bridge with them is an
 
 The on-chain light client stores the latest verified header for whichever update mode the operator has configured.
 
-**Step 4 - Prove deposit events.** Once the on-chain light client holds a verified finalized header, the relayer can prove that a `Deposit` event occurred in a block at or before that header. It does this with a receipt Merkle proof: a path through the `receipts_root` of the finalized execution block proving that a specific transaction receipt (containing the deposit event) is included.
+**Step 4 - Prove deposit events.** Once the on-chain light client holds a verified finalized header, the relayer can prove that a `MessagePosted` event occurred in a block at or before that header. It does this with a receipt Merkle proof: a path through the `receipts_root` of the finalized execution block proving that a specific transaction receipt (containing the deposit event) is included.
 
 **Step 5 - Verify and mint.** The destination bridge contract checks the receipt proof against the `receipts_root` from the stored finalized header, decodes the deposit event, checks the fee and nonce, and mints the wrapped asset.
 
@@ -291,7 +291,7 @@ This gives us a fully trusted `receipts_root` for the target block, anchored all
 
 **The manipulation resistance.**
 
-This is the security property that makes the design tight. Suppose an attacker wants to prove a fake deposit - one that never happened on Ethereum. They would need to provide a fake execution block with a fabricated `Deposit` event. To pass the ancestry proof, their fake block's root must match `block_roots[slot]` in the beacon state.
+This is the security property that makes the design tight. Suppose an attacker wants to prove a fake deposit - one that never happened on Ethereum. They would need to provide a fake execution block with a fabricated `MessagePosted` event. To pass the ancestry proof, their fake block's root must match `block_roots[slot]` in the beacon state.
 
 But `block_roots[slot]` is committed to in `state_root`, which is committed to in the beacon block header, which is signed by the sync committee. To replace `block_roots[slot]` with a different value, the attacker would need to forge a BLS aggregate signature from 2/3+ of 512 validators — computationally infeasible.
 
@@ -301,7 +301,7 @@ The sync committee's signature does not just vouch for one header. It vouches fo
 
 #### Receipt Proof
 
-With a trusted `receipts_root` established through the ancestry proof, the receipt proof proves that a specific transaction receipt — containing the `Deposit` event — is included in that block.
+With a trusted `receipts_root` established through the ancestry proof, the receipt proof proves that a specific transaction receipt — containing the `MessagePosted` event — is included in that block.
 
 **Ethereum's receipt trie.**
 
@@ -316,14 +316,14 @@ The relayer constructs a Merkle Patricia Trie inclusion proof for the specific r
 1. Starts at the trusted `receipts_root`.
 2. Follows the key path (derived from the transaction index) through branch and extension nodes, verifying each node's hash against its parent's reference.
 3. Reaches the leaf containing the RLP-encoded receipt.
-4. Decodes the receipt and locates the `Deposit` event in its log list.
+4. Decodes the receipt and locates the `MessagePosted` event in its log list.
 
 **Event decoding.**
 
 Each log in a receipt has three fields:
 
 - `address` — must match the known bridge contract address on Ethereum.
-- `topics[0]` — must equal `keccak256("Deposit(address,uint256,address,uint256)")`, the event signature fingerprint.
+- `topics[0]` — must equal `keccak256("MessagePosted(address,uint256,address,uint256)")`, the event signature fingerprint.
 - `data` — ABI-encoded parameters: asset, amount, recipient, nonce, fee.
 
 The bridge module validates the address and event signature, then ABI-decodes `data` to extract the deposit parameters used for minting on Supra.
@@ -376,13 +376,13 @@ The system has five components.
 
 Solidity contracts deployed on Ethereum (and BSC for the BSC↔SUPRA direction). These are the entry point for users.
 
-When a user wants to bridge, they call the deposit function with the asset and recipient address. The contract locks the asset and emits a `Deposit` event containing the amount, recipient, nonce, and fee. Nothing else - the contract is deliberately minimal. It doesn't know anything about Supra, sync committees, or proofs. Its only job is to custody assets and emit a verifiable record of deposits.
+When a user wants to bridge, they call the deposit function with the asset and recipient address. The contract locks the asset and emits a `MessagePosted` event containing the amount, recipient, nonce, and fee. Nothing else - the contract is deliberately minimal. It doesn't know anything about Supra, sync committees, or proofs. Its only job is to custody assets and emit a verifiable record of deposits.
 
 On the return path (Supra→ETH), the source contract handles withdrawals: it verifies a proof of a burn event on Supra and releases the locked asset.
 
 ### Relayer
 
-The relayer is the off-chain workhorse. Written in Rust with Tokio, it watches finalized Ethereum blocks for `Deposit` events and drives them through to settlement on Supra.
+The relayer is the off-chain workhorse. Written in Rust with Tokio, it watches finalized Ethereum blocks for `MessagePosted` events and drives them through to settlement on Supra.
 
 For each finalized deposit event, the relayer:
 
@@ -426,7 +426,7 @@ Two Move modules on Supra handle the receiving side.
 **Bridge module** - When the relayer submits a deposit proof, this module:
 
 1. Verifies the receipt Merkle proof against the `receipts_root` from the stored finalized header.
-2. Decodes the `Deposit` event from the receipt.
+2. Decodes the `MessagePosted` event from the receipt.
 3. Checks the fee, verifies the nonce hasn't been replayed.
 4. Mints the wrapped asset to the recipient.
 
@@ -443,12 +443,11 @@ The indexer is purely informational. It has no ability to influence on-chain sta
 
 ## End-to-End Flow
 
-1. User calls `deposit()` on the Ethereum source contract. Asset is locked, `Deposit` event emitted.
-2. Committee updater submits `LightClientFinalityUpdate` to Supra - the on-chain light client advances to the finalized Ethereum head, BLS signature verified.
-3. Relayer detects the `Deposit` event in the finalized block. Constructs receipt Merkle proof.
-4. Relayer submits proof to the Supra bridge module. Receipt is verified against the stored `receipts_root`, fee and nonce checked.
-5. Wrapped asset minted to the recipient on Supra.
-6. Indexer picks up both the source event and destination mint, marks the transaction complete.
+1. User calls `deposit()` on the Ethereum source contract. Asset is locked, `MessagePosted` event emitted.
+2. Relayer detects the `MessagePosted` event in the finalized block. Constructs receipt Merkle proof.
+3. Relayer submits proof to the Supra bridge module. Receipt is verified against the stored `receipts_root`, fee and nonce checked.
+4. Wrapped asset minted to the recipient on Supra.
+5. Indexer picks up both the source event and destination mint, marks the transaction complete.
 
 End-to-end latency is dominated by Ethereum finality: ~13 minutes for a checkpoint. Post-finality, relay and proof submission on Supra takes seconds.
 
