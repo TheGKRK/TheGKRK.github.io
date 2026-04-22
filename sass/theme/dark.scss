@@ -1,26 +1,125 @@
-$bg-0: #171717; // Slightly lighter dark base to reduce harshness
+$bg-0:    #0a0e17;
+$bg-1:    #111827;
+$bg-2:    #1e2d45;
+$code-bg: #0d1829;
 
-// Dark theme needs a bigger contrast compared to the white theme.
-$bg-1: lighten($bg-0, 5%);
-$bg-2: lighten($bg-1, 10%);
-
-$text-0: lighten($bg-0, 70%); // Slightly dimmer primary text for dark theme
-$text-1: lighten($bg-0, 60%);
+$text-0: #e2e8f0;
+$text-1: #94a3b8;
+$muted:  #64748b;
 
 :root.dark {
   --text-0: #{$text-0};
   --text-1: #{$text-1};
+  --muted:  #{$muted};
 
-  --bg-0: #{$bg-0};
-  --bg-1: #{$bg-1};
-  --bg-2: #{$bg-2};
+  --bg-0:    #{$bg-0};
+  --bg-1:    #{$bg-1};
+  --bg-2:    #{$bg-2};
+  --code-bg: #{$code-bg};
 
-  --border-color: var(--bg-2);
+  --border-color:  #{$bg-2};
+  --primary-color: #38bdf8;
+  --accent2:       #818cf8;
+  --accent3:       #34d399;
+  --hover-color:   #{$text-0};
 
-  --primary-color: #78DCE8;
-  --hover-color: var(--text-0);
+  --text-font:   'Syne', 'Inter', system-ui, sans-serif;
+  --header-font: 'Syne', 'Inter', system-ui, sans-serif;
+  --code-font:   'Space Mono', monospace;
 
-  .social>img {
-    filter: invert(1);
+  .social > img {
+    filter: invert(0.85);
+  }
+
+  // Subtle grid background
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+  }
+
+  // Gradient page titles
+  .page-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  // Code blocks
+  pre {
+    background: var(--code-bg) !important;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+  }
+
+  code:not([class]) {
+    background: var(--code-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--primary-color);
+    padding: 0.15em 0.4em;
+    font-size: 0.85em;
+  }
+
+  // Section h2 with left accent bar
+  article h2, main h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 3px;
+      height: 1.2em;
+      background: linear-gradient(to bottom, var(--primary-color), var(--accent2));
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+  }
+
+  // h3 mono accent
+  article h3, main h3 {
+    color: var(--primary-color);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.95rem;
+    letter-spacing: 0.03em;
+  }
+
+  // Table
+  table th {
+    background: var(--bg-1);
+    color: var(--primary-color);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  table td {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--text-1);
+  }
+
+  table tr:hover td {
+    background: rgba(56, 189, 248, 0.03);
+  }
+
+  blockquote {
+    border-left-color: var(--primary-color);
+    color: var(--text-1);
   }
 }

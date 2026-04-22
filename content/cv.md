@@ -100,25 +100,25 @@ Experienced in researching and working with **EVM internals**, **light clients**
 * Focus on research, design, security, performance, and correctness.
 * Tech: Rust, Cryptography
 
-### **[Supra Oracles](https://github.com/KiranKBR/supra_oracles)**
+### **[Supra Oracles](https://github.com/TheGKRK/supra_oracles)**
 
 * Multi-socket oracle listener aggregating price feeds.
 * Signature verification and averaging logic.
 * Tech: Rust, Tokio, WebSockets, ECDSA
 
-### **[OHLC](https://github.com/KiranKBR/ohlc)**
+### **[OHLC](https://github.com/TheGKRK/ohlc)**
 
 * Rolling OHLC computation for price streams.
 * Designed for efficiency and correctness.
 * Tech: Rust
 
-### **[GroundKart](https://github.com/KiranKBR/groundkart_)**
+### **[GroundKart](https://github.com/TheGKRK/groundkart_)**
 
 * E-commerce platform for sports equipment.
 * Backend-focused design with REST APIs.
 * Tech: Rust, Actix, Diesel ORM, PostgreSQL
 
-### **[Trading Engine](https://github.com/KiranKBR/trading-engine)**
+### **[Trading Engine](https://github.com/TheGKRK/trading-engine)**
 
 * Simple trading engine built in Rust.
 * Focus on core matching and performance.
