@@ -23,9 +23,9 @@ $muted:  #64748b;
   --accent3:       #34d399;
   --hover-color:   #{$text-0};
 
-  --text-font:   'Syne', 'Inter', system-ui, sans-serif;
-  --header-font: 'Syne', 'Inter', system-ui, sans-serif;
-  --code-font:   'Space Mono', monospace;
+  --text-font:   'Inter', system-ui, sans-serif;
+  --header-font: 'Inter', system-ui, sans-serif;
+  --code-font:   'JetBrains Mono', monospace;
 
   .social > img {
     filter: invert(0.85);
@@ -93,7 +93,7 @@ $muted:  #64748b;
   // h3 mono accent
   article h3, main h3 {
     color: var(--primary-color);
-    font-family: 'Space Mono', monospace;
+    font-family: var(--text-font);
     font-size: 0.95rem;
     letter-spacing: 0.03em;
   }
@@ -102,14 +102,14 @@ $muted:  #64748b;
   table th {
     background: var(--bg-1);
     color: var(--primary-color);
-    font-family: 'Space Mono', monospace;
+    font-family: var(--code-font);
     font-size: 0.75rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }
 
   table td {
-    font-family: 'Space Mono', monospace;
+    font-family: var(--code-font);
     font-size: 0.82rem;
     color: var(--text-1);
   }
@@ -121,5 +121,23 @@ $muted:  #64748b;
   blockquote {
     border-left-color: var(--primary-color);
     color: var(--text-1);
+  }
+
+  // CV page — reset blog-style decorations on headings
+  .cv-content {
+    h2 {
+      display: block;
+
+      &::before {
+        display: none;
+      }
+    }
+
+    h3 {
+      color: var(--text-0);
+      font-family: var(--text-font);
+      font-size: 1.25rem;
+      letter-spacing: normal;
+    }
   }
 }

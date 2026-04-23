@@ -144,6 +144,32 @@
     }
 }
 
+// Override dark mode's article h3 rules which would otherwise win due to
+// :root.dark article h3 having higher specificity than .cv-content h3
+:root.dark .cv-content {
+    h2 {
+        // Keep border-bottom visible; dark mode adds flex + gradient bar which is fine
+        border-bottom-color: var(--border-color);
+    }
+
+    h3 {
+        color: var(--text-0);
+        font-size: 1.25rem;
+        font-weight: 600;
+        font-family: var(--text-font);
+        letter-spacing: normal;
+    }
+
+    // Ensure contact paragraph links and text are always visible
+    h1 + p {
+        color: var(--text-0);
+
+        a {
+            color: var(--primary-color);
+        }
+    }
+}
+
 @media print {
     .cv-container {
         max-width: 100%;

@@ -2,13 +2,14 @@
 title = "Curriculum Vitae"
 template = "cv.html"
 insert_anchor_links = "none"
+draft = true
 +++
 
 <div style="text-align:center;">
 
 # Kiran Kumar
 
- [Twitter](https://twitter.com/Kirank279) | [GitHub](https://github.com/TheGKRK) | [LinkedIn](https://www.linkedin.com/in/kiran-kumar-30455013b/) | [gangakiran07@gmail.com](mailto:gangakiran07@gmail.com) | +91 7989482118 
+ [Twitter/X](https://twitter.com/Kirank279) | [GitHub](https://github.com/TheGKRK) | [LinkedIn](https://www.linkedin.com/in/kiran-kumar-30455013b/) | [gangakiran07@gmail.com](mailto:gangakiran07@gmail.com) 
 
 </div>
 
@@ -27,7 +28,7 @@ Experienced in researching and working with **EVM internals**, **light clients**
 ### **Supra — Senior Blockchain Engineer**
 
 *Sep 2024 – Present*
-* Built the **first trustless bridge with MoveVM as the destination execution environment [(HyperNova)](https://supranova.ai/)**, leading end-to-end research and development for the BSC↔SUPRA bridge.
+* Built the **first trustless bridge with MoveVM as the destination execution environment [(HyperNova)](https://supranova.ai/)**, leading end-to-end research and development for the BSC<->SUPRA bridge.
 
 * Conducted in-depth research on **EVM execution**, **light clients**, and **Ethereum sync committees** to inform protocol and system design.
 * Prototyped and built **HyperNova end-to-end**, translating research into a **production-grade interoperability system**.
@@ -96,7 +97,7 @@ Experienced in researching and working with **EVM internals**, **light clients**
 
 ### **[HyperNova Bridge (Supra)](https://supranova.ai/)**
 
-* Production-grade **trustless bridge** deployed on mainnet (**ETH↔SUPRA, BSC↔SUPRA, and reverse bridges**).
+* Production-grade **trustless bridge** deployed on mainnet (**ETH<->SUPRA, BSC<->SUPRA, and reverse bridges**).
 * Focus on research, design, security, performance, and correctness.
 * Tech: Rust, Cryptography
 

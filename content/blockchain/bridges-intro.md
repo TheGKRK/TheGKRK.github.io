@@ -161,14 +161,14 @@ It computes the aggregate pubkey of the *participating* members (using the bitfi
 
 This is a question worth answering precisely, because the answer is both.
 
-**Committee selection is pseudo-random but deterministic.** Validators are selected using RANDAO - a verifiable randomness beacon built into Ethereum's consensus. Given the RANDAO value for an epoch, the selection of the 512 sync committee members is a deterministic computation. Any validator (or anyone observing the chain) can compute the next committee in advance. There is no unpredictability once the RANDAO value is known.
+**Committee selection is pseudo-random but conditionally deterministic.** Validators are selected using RANDAO - a verifiable randomness beacon built into Ethereum's consensus. The next committee is computed one full period (~27h) in advance, using the active validator set at that selection point. If the validator set does not change between selection and activation (no new validators joining, no exits, no slashings), the committee composition is fully deterministic and anyone can compute it in advance. But if validators join or exit after the selection point, non-determinism enters: a selected validator may have exited before their period begins, meaning they are in the committee by index but will never sign. The committee is locked in regardless: there is no reselection.
 
 **Signature verification is fully deterministic.** Given a block header, a `SyncAggregate`, and the committee's public keys, the verification result is always the same. There is no ambiguity. This is what makes it usable on-chain: the Move module on Supra runs the same deterministic BLS verification and all nodes reach the same conclusion.
 
-**Participation is non-deterministic in practice.** Which of the 512 members actually sign each slot is not predictable in advance. Validators can be offline, have network issues, or choose not to participate. The bridge must handle this - verification uses only the participating members' aggregate pubkey, derived from the bitfield.
+**Participation is non-deterministic in practice.** Which of the 512 members actually sign each slot is not predictable in advance. Validators can be offline, exit after selection, get slashed, or simply have network issues. The bridge handles this: verification uses only the participating members' aggregate pubkey, recomputed from the participation bitfield. The 2/3+ threshold provides enough slack to tolerate a realistic number of post-selection exits without breaking liveness.
 
 {% card() %}
-For a bridge, what matters is that *verification is deterministic*. Given the same inputs, every node on the destination chain will reach the same result. This is the property that makes on-chain light client verification possible.
+For a bridge, what matters is that *verification is deterministic*. Given the same inputs (header, aggregate signature, participation bitfield, stored committee pubkeys), every node on the destination chain reaches the same result. Validator churn affects who participates, not whether the verification logic itself is sound.
 {% end %}
 
 ### Committee Rotation
@@ -212,9 +212,9 @@ Knowing what sync committees are is one thing. Building a bridge with them is an
 
 The on-chain light client stores the latest verified header for whichever update mode the operator has configured.
 
-**Step 4 - Prove deposit events.** Once the on-chain light client holds a verified finalized header, the relayer can prove that a `MessagePosted` event occurred in a block at or before that header. It does this with a receipt Merkle proof: a path through the `receipts_root` of the finalized execution block proving that a specific transaction receipt (containing the deposit event) is included.
+**Step 4 - Prove deposit events.** Once the on-chain light client holds a verified header from any of the three update modes (optimistic, finalized, or safe), the relayer can prove that a `MessagePosted` event occurred in a block at or before that header. It does this with a receipt Merkle proof: a path through the `receipts_root` of the target execution block proving that a specific transaction receipt (containing the deposit event) is included. The update mode the operator configured determines the latency and security tradeoff; the proof construction is identical regardless.
 
-**Step 5 - Verify and mint.** The destination bridge contract checks the receipt proof against the `receipts_root` from the stored finalized header, decodes the deposit event, checks the fee and nonce, and mints the wrapped asset.
+**Step 5 - Verify and mint.** The destination bridge contract checks the receipt proof against the `receipts_root` from the stored header, decodes the deposit event, checks the fee and nonce, and mints the wrapped asset.
 
 ### Proof Verification Process
 
@@ -227,10 +227,10 @@ The signature proof establishes that the submitted Ethereum block header is part
 **How BLS aggregation works.** BLS signatures have a special algebraic property: multiple signatures over the same message can be combined into a single signature of the same size. The verification equation for an aggregate signature is:
 
 ```
-e(σ_agg, G2) == e(H(message), pk_agg)
+e(sig_agg, G2) == e(H(message), pk_agg)
 ```
 
-Where `e` is a bilinear pairing on BLS12-381, `σ_agg` is the aggregate signature, `G2` is the generator of the G2 group, `H(message)` is the hash of the signed message mapped to G1, and `pk_agg` is the aggregate of the participating members' public keys.
+Where `e` is a bilinear pairing on BLS12-381, `sig_agg` is the aggregate signature, `G2` is the generator of the G2 group, `H(message)` is the hash of the signed message mapped to G1, and `pk_agg` is the aggregate of the participating members' public keys.
 
 The `SyncAggregate` in the Ethereum block carries two fields:
 
@@ -242,7 +242,7 @@ The `SyncAggregate` in the Ethereum block carries two fields:
 1. Reads the stored current committee's 512 individual public keys.
 2. Uses `sync_committee_bits` to select only the participating members.
 3. Aggregates their public keys into a single `pk_agg`.
-4. Runs BLS12-381 signature verification: `verify(σ_agg, H(header), pk_agg)`.
+4. Runs BLS12-381 signature verification: `verify(sig_agg, H(header), pk_agg)`.
 
 Step 4 requires a BLS12-381 pairing operation - expensive elliptic curve math that has no native support on MoveVM. We implemented this as a native function in Supra's VM runtime: a Rust function exposed directly to the Move execution layer. The Move contract calls it like any other function; the VM dispatches it to the Rust implementation.
 
@@ -252,16 +252,16 @@ If verification passes, the submitted header is stored as the new trusted Ethere
 A valid signature from 2/3+ of the sync committee is the only on-chain authority for what Ethereum's state looks like. There are no oracles, no multisig signers, no external validators. The math is the trust.
 {% end %}
 
-#### Ancestry Proof — Block Root and Historical Root
+#### Ancestry Proof: Block Root and Historical Root
 
-The signature proof gives us a trusted beacon block header with a verified `state_root`. The ancestry proof uses this `state_root` to establish the canonical block root of the target block — without walking a chain of parent hashes.
+The signature proof gives us a trusted beacon block header with a verified `state_root`. The ancestry proof uses this `state_root` to establish the canonical block root of the target block, without walking a chain of parent hashes.
 
 **How Ethereum commits to past block roots.**
 
 The Ethereum beacon state is a large SSZ structure. Two of its fields are critical for ancestry proofs:
 
-- `block_roots` — a fixed-size vector of the 8,192 most recent beacon block roots, one per slot. It acts as a rolling window of recent history.
-- `historical_summaries` — for blocks older than 8,192 slots, Ethereum accumulates chunks of 8,192 block roots into a `HistoricalSummary`, each of which contains a `block_summary_root` (the Merkle root of a 8,192-slot chunk of block roots).
+- `block_roots`: a fixed-size vector of the 8,192 most recent beacon block roots, one per slot. It acts as a rolling window of recent history.
+- `historical_summaries`: for blocks older than 8,192 slots, Ethereum accumulates chunks of 8,192 block roots into a `HistoricalSummary`, each of which contains a `block_summary_root` (the Merkle root of a 8,192-slot chunk of block roots).
 
 The key insight: **the beacon state is committed to in the beacon block header via `state_root`**, and the sync committee signs the beacon block header. This means the sync committee's BLS signature transitively commits to every block root stored in `block_roots` and `historical_summaries`.
 
@@ -271,7 +271,7 @@ If the deposit occurred within the last 8,192 slots:
 
 1. The relayer provides a Merkle branch from `state_root` into `block_roots[target_slot % 8192]`.
 2. The contract verifies the branch using SSZ Merkle proof verification.
-3. The result is `block_root` — the canonical beacon block root for the target slot, directly trusted because it is committed to in the committee-signed state.
+3. The result is `block_root`, the canonical beacon block root for the target slot, directly trusted because it is committed to in the committee-signed state.
 
 **Proving the target block for older slots.**
 
@@ -285,7 +285,7 @@ In both cases, the output is identical: a `block_root` that is cryptographically
 
 **From block root to receipts root.**
 
-The `block_root` is the SSZ hash of the beacon block. The beacon block body contains an `execution_payload` — the execution layer block. A Merkle branch proves the `execution_payload_header` (which contains `receipts_root`) is included in the beacon block. The contract verifies this branch and extracts `receipts_root`.
+The `block_root` is the SSZ hash of the beacon block. The beacon block body contains an `execution_payload` (the execution layer block). A Merkle branch proves the `execution_payload_header` (which contains `receipts_root`) is included in the beacon block. The contract verifies this branch and extracts `receipts_root`.
 
 This gives us a fully trusted `receipts_root` for the target block, anchored all the way back to the committee's signature.
 
@@ -293,25 +293,25 @@ This gives us a fully trusted `receipts_root` for the target block, anchored all
 
 This is the security property that makes the design tight. Suppose an attacker wants to prove a fake deposit - one that never happened on Ethereum. They would need to provide a fake execution block with a fabricated `MessagePosted` event. To pass the ancestry proof, their fake block's root must match `block_roots[slot]` in the beacon state.
 
-But `block_roots[slot]` is committed to in `state_root`, which is committed to in the beacon block header, which is signed by the sync committee. To replace `block_roots[slot]` with a different value, the attacker would need to forge a BLS aggregate signature from 2/3+ of 512 validators — computationally infeasible.
+But `block_roots[slot]` is committed to in `state_root`, which is committed to in the beacon block header, which is signed by the sync committee. To replace `block_roots[slot]` with a different value, the attacker would need to forge a BLS aggregate signature from 2/3+ of 512 validators, which is computationally infeasible.
 
 {% card(type="purple") %}
-The sync committee's signature does not just vouch for one header. It vouches for the entire beacon state — including every block root in `block_roots` and every historical summary in `historical_summaries`. An attacker cannot substitute a different target block without breaking the Merkle branch, and they cannot forge a new valid signature to cover a tampered state. The block root mismatch is detectable, and there is no way around it.
+The sync committee's signature does not just vouch for one header. It vouches for the entire beacon state, including every block root in `block_roots` and every historical summary in `historical_summaries`. An attacker cannot substitute a different target block without breaking the Merkle branch, and they cannot forge a new valid signature to cover a tampered state. The block root mismatch is detectable, and there is no way around it.
 {% end %}
 
 #### Receipt Proof
 
-With a trusted `receipts_root` established through the ancestry proof, the receipt proof proves that a specific transaction receipt — containing the `MessagePosted` event — is included in that block.
+With a trusted `receipts_root` established through the ancestry proof, the receipt proof proves that a specific transaction receipt (containing the `MessagePosted` event) is included in that block.
 
 **Ethereum's receipt trie.**
 
-Ethereum stores all transaction receipts for a block in a Merkle Patricia Trie (MPT). The trie root is `receipts_root`, committed to in the execution block header and now trusted through the chain: signature → state root → block root → execution payload → receipts root.
+Ethereum stores all transaction receipts for a block in a Merkle Patricia Trie (MPT). The trie root is `receipts_root`, committed to in the execution block header and now trusted through the chain: signature -> state root -> block root -> execution payload -> receipts root.
 
 Each receipt is keyed by its transaction index (RLP-encoded), and the leaf contains the full RLP-encoded receipt.
 
 **Proof verification.**
 
-The relayer constructs a Merkle Patricia Trie inclusion proof for the specific receipt — a sequence of trie nodes from `receipts_root` down to the leaf. The verifier:
+The relayer constructs a Merkle Patricia Trie inclusion proof for the specific receipt: a sequence of trie nodes from `receipts_root` down to the leaf. The verifier:
 
 1. Starts at the trusted `receipts_root`.
 2. Follows the key path (derived from the transaction index) through branch and extension nodes, verifying each node's hash against its parent's reference.
@@ -322,18 +322,18 @@ The relayer constructs a Merkle Patricia Trie inclusion proof for the specific r
 
 Each log in a receipt has three fields:
 
-- `address` — must match the known bridge contract address on Ethereum.
-- `topics[0]` — must equal `keccak256("MessagePosted(address,uint256,address,uint256)")`, the event signature fingerprint.
-- `data` — ABI-encoded parameters: asset, amount, recipient, nonce, fee.
+- `address`: must match the known bridge contract address on Ethereum.
+- `topics[0]`: must equal `keccak256("MessagePosted(address,uint256,address,uint256)")`, the event signature fingerprint.
+- `data`: ABI-encoded parameters: asset, amount, recipient, nonce, fee.
 
 The bridge module validates the address and event signature, then ABI-decodes `data` to extract the deposit parameters used for minting on Supra.
 
 **Why receipt root manipulation fails.**
 
-If an attacker provides a fake receipt with a fabricated deposit amount, the MPT proof would not match the trusted `receipts_root` — the trie hash would differ. And since `receipts_root` is committed to inside the `block_root` that the sync committee signed, the attacker cannot produce a valid alternate `receipts_root` without breaking the committee signature. The two verification paths — ancestry and receipt — reinforce each other.
+If an attacker provides a fake receipt with a fabricated deposit amount, the MPT proof would not match the trusted `receipts_root`: the trie hash would differ. And since `receipts_root` is committed to inside the `block_root` that the sync committee signed, the attacker cannot produce a valid alternate `receipts_root` without breaking the committee signature. The two verification paths, ancestry and receipt, reinforce each other.
 
 {% warning() %}
-All three proofs must pass for a mint to execute. Signature proof fails — rejected at the light client, nothing downstream runs. Ancestry proof fails — the block root does not match the signed state, rejected. Receipt proof fails — the receipt is not in the trie or the event does not match, rejected. There is no partial success path and no override.
+All three proofs must pass for a mint to execute. Signature proof fails: rejected at the light client, nothing downstream runs. Ancestry proof fails: the block root does not match the signed state, rejected. Receipt proof fails: the receipt is not in the trie or the event does not match, rejected. There is no partial success path and no override.
 {% end %}
 
 ## SupraNova Verification Strategy
@@ -374,11 +374,11 @@ The system has five components.
 
 ### Source Contracts
 
-Solidity contracts deployed on Ethereum (and BSC for the BSC↔SUPRA direction). These are the entry point for users.
+Solidity contracts deployed on Ethereum (and BSC for the BSC<->SUPRA direction). These are the entry point for users.
 
 When a user wants to bridge, they call the deposit function with the asset and recipient address. The contract locks the asset and emits a `MessagePosted` event containing the amount, recipient, nonce, and fee. Nothing else - the contract is deliberately minimal. It doesn't know anything about Supra, sync committees, or proofs. Its only job is to custody assets and emit a verifiable record of deposits.
 
-On the return path (Supra→ETH), the source contract handles withdrawals: it verifies a proof of a burn event on Supra and releases the locked asset.
+On the return path (Supra->ETH), the source contract handles withdrawals: it verifies a proof of a burn event on Supra and releases the locked asset.
 
 ### Relayer
 
@@ -404,12 +404,12 @@ This is a separate process from the relayer, with a distinct responsibility: kee
 
 The committee updater continuously polls the Ethereum Beacon API for `LightClientFinalityUpdate` and `LightClientUpdate` messages and submits them to the light client module on Supra.
 
-Critically, this is fully trustless and cryptographically verifiable. The committee updater is not a trusted party — it is untrusted infrastructure, exactly like the relayer. Every message it submits is verified on-chain by the Move light client module before being accepted:
+Critically, this is fully trustless and cryptographically verifiable. The committee updater is not a trusted party: it is untrusted infrastructure, exactly like the relayer. Every message it submits is verified on-chain by the Move light client module before being accepted:
 
 - A `LightClientUpdate` (committee rotation) carries the `next_sync_committee` with an SSZ Merkle branch proving its inclusion in the beacon state, plus a `sync_aggregate` from the current committee signing off on the transition. The on-chain module verifies the BLS signature and the Merkle branch. If either is invalid, the update is rejected.
 - A `LightClientFinalityUpdate` carries a finalized header with a Merkle branch proving finality, plus a `sync_aggregate`. Same verification: BLS check, Merkle check, reject on failure.
 
-The committee updater cannot submit a false committee or a fabricated finalized header. Any tampered data produces an invalid signature or a Merkle branch mismatch — caught and rejected on-chain. The committee updater's only power is liveness: it can choose not to submit, but it cannot submit anything that passes verification unless Ethereum's consensus actually produced it.
+The committee updater cannot submit a false committee or a fabricated finalized header. Any tampered data produces an invalid signature or a Merkle branch mismatch, caught and rejected on-chain. The committee updater's only power is liveness: it can choose not to submit, but it cannot submit anything that passes verification unless Ethereum's consensus actually produced it.
 
 Separating this from the relayer is a deliberate design choice. The light client must keep advancing regardless of whether any deposits are happening. If the committee updater falls more than one rotation period (~27h) behind, the on-chain light client loses the ability to verify signatures because it no longer knows the current committee's keys. Keeping it as an independent process with its own liveness guarantees makes this easier to reason about and operate.
 
@@ -417,15 +417,15 @@ Separating this from the relayer is a deliberate design choice. The light client
 
 Two Move modules on Supra handle the receiving side.
 
-**Light client module** - Stores the current sync committee's aggregate public key and the latest finalized Ethereum block header. When the committee updater submits a `LightClientFinalityUpdate`, this module:
+**Light client module** - Stores the current sync committee's aggregate public key and the latest verified Ethereum block header. Depending on the configured update mode, the committee updater submits a `LightClientOptimisticUpdate`, `LightClientFinalityUpdate`, or the SupraNova safe update. For each, this module:
 
 1. Verifies the BLS12-381 aggregate signature from the sync committee over the attested header.
-2. Updates the stored finalized header if the signature is valid.
+2. Updates the stored header if the signature is valid.
 3. On committee rotation, verifies the `next_sync_committee` Merkle branch against the beacon state root and updates the stored committee keys.
 
 **Bridge module** - When the relayer submits a deposit proof, this module:
 
-1. Verifies the receipt Merkle proof against the `receipts_root` from the stored finalized header.
+1. Verifies the receipt Merkle proof against the `receipts_root` from the stored header.
 2. Decodes the `MessagePosted` event from the receipt.
 3. Checks the fee, verifies the nonce hasn't been replayed.
 4. Mints the wrapped asset to the recipient.
@@ -443,8 +443,8 @@ The indexer is purely informational. It has no ability to influence on-chain sta
 
 ## End-to-End Flow
 
-1. User calls `deposit()` on the Ethereum source contract. Asset is locked, `MessagePosted` event emitted.
-2. Relayer detects the `MessagePosted` event in the finalized block. Constructs receipt Merkle proof.
+1. User calls deposit related functions on the Ethereum source contract. Asset is locked, `MessagePosted` event emitted.
+2. Relayer detects the `MessagePosted` event. Constructs receipt Merkle proof once the light client has a verified header at or past the target block (via optimistic, safe, or finalized update).
 3. Relayer submits proof to the Supra bridge module. Receipt is verified against the stored `receipts_root`, fee and nonce checked.
 4. Wrapped asset minted to the recipient on Supra.
 5. Indexer picks up both the source event and destination mint, marks the transaction complete.
@@ -454,3 +454,10 @@ End-to-end latency is dominated by Ethereum finality: ~13 minutes for a checkpoi
 {% card(type="green") %}
 **Trust model:** if you trust Ethereum's proof-of-stake consensus and the BLS12-381 implementation in MoveVM, the bridge is trustless. No external signers, no multisig, no oracle. The relayer and committee updater are liveness dependencies - not security dependencies.
 {% end %}
+
+## References
+
+- [HyperNova Whitepaper](https://supra.com/documents/Supra-HyperNova-Whitepaper.pdf) - SupraNova trustless bridge design, security proofs, and verification strategy
+- [Ethereum Altair Light Client Sync Protocol](https://github.com/ethereum/consensus-specs/blob/master/specs/altair/light-client/sync-protocol.md) - official spec for `LightClientUpdate`, `LightClientStore`, committee rotation logic
+- [Ethereum Annotated Sync Protocol](https://github.com/ethereum/annotated-spec/blob/master/altair/sync-protocol.md) - annotated walkthrough of the sync committee protocol
+- [Altair Fork Spec](https://github.com/ethereum/consensus-specs/blob/master/specs/altair/beacon-chain.md) - Ethereum Altair upgrade introducing sync committees
