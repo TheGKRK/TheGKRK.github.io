@@ -1,5 +1,5 @@
 +++
-title = "Cross-Chain Bridges: What They Are and How They Work"
+title = "Bridges Part 1: Building Trustless Bridges with Sync Committees"
 date = 2026-04-23
 description = "A ground-up introduction to cross-chain bridges - why they exist, the trust models that separate them, and a deep dive into sync committees and the SupraNova light-client bridge architecture."
 [taxonomies]
