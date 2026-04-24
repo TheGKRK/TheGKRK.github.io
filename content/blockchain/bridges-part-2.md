@@ -2,11 +2,11 @@
 title = "Bridges Part 2: How Intent-Based Bridges Work"
 date = 2026-04-23
 description = "A deep dive into intent-based bridge architecture: intents, solvers, Dutch auctions, optimistic settlement, capital efficiency, and the economics that make it work."
+draft = true
 [taxonomies]
 tags = ["blockchain", "bridges", "interoperability", "cross-chain", "intents", "defi"]
 [extra]
 toc = true
-draft = true
 +++
 
 In [Part 1](@/blockchain/bridges-intro.md) we built a trustless bridge using Ethereum sync committees. The user waits ~13 minutes for finality. The destination chain verifies a chain of cryptographic proofs. Security reduces entirely to Ethereum consensus.
