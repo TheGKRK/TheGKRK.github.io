@@ -2,7 +2,6 @@
 title = "Curriculum Vitae"
 template = "cv.html"
 insert_anchor_links = "none"
-draft = true
 +++
 
 <div style="text-align:center;">
