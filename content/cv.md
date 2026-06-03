@@ -8,7 +8,7 @@ insert_anchor_links = "none"
 
 # Kiran Kumar
 
- [Twitter/X](https://twitter.com/Kirank279) | [GitHub](https://github.com/TheGKRK) | [LinkedIn](https://www.linkedin.com/in/kiran-kumar-30455013b/) | [gangakiran07@gmail.com](mailto:gangakiran07@gmail.com) 
+ [Twitter/X](https://twitter.com/Kirank279) | [GitHub](https://github.com/TheGKRK) | [LinkedIn](https://www.linkedin.com/in/kiran-kumar-30455013b/) 
 
 </div>
 
@@ -24,7 +24,7 @@ Experienced in researching and working with **EVM internals**, **light clients**
 
 ## Experience
 
-### **Supra — Senior Blockchain Engineer**
+### **Supra: Senior Blockchain Engineer**
 
 *Sep 2024 – Present*
 * Built the **first trustless bridge with MoveVM as the destination execution environment [(HyperNova)](https://supranova.ai/)**, leading end-to-end research and development for the BSC<->SUPRA bridge.
@@ -45,7 +45,7 @@ Experienced in researching and working with **EVM internals**, **light clients**
 
 ---
 
-### **Blockchain Security Academy (JohnnyTime) — Security Researcher**
+### **Blockchain Security Academy (JohnnyTime): Security Researcher**
 
 *Jan 2024 – Present*
 
@@ -57,7 +57,7 @@ Experienced in researching and working with **EVM internals**, **light clients**
 
 ---
 
-### **Juspay — Software Development Engineer (Rust)**
+### **Juspay: Software Development Engineer (Rust)**
 
 *Jun 2023 – Sep 2024*
 
@@ -71,7 +71,7 @@ Experienced in researching and working with **EVM internals**, **light clients**
 
 ---
 
-### **Virtusa — Software Developer**
+### **Virtusa: Software Developer**
 
 *Nov 2021 – Jun 2023*
 
@@ -128,9 +128,8 @@ Experienced in researching and working with **EVM internals**, **light clients**
 
 ## Education
 
-**IIIT RK Valley — B.Tech in Computer Science & Engineering**
+**IIIT RK Valley: B.Tech in Computer Science & Engineering**
 *Graduated: May 2022*
-CGPA: **8.4**
 
 ---
 
