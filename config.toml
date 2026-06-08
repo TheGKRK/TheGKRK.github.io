@@ -25,10 +25,6 @@ mathjax_dollar_inline_enable = true
 katex_enable = true
 katex_auto_render = true
 repo_url = "https://github.com/TheGKRK/TheGKRK.github.io/"
-socials = [
-    { name = "GitHub (TheGKRK)", icon = "github", url = "https://github.com/TheGKRK" },
-    { name = "GitHub (kiran-supra)", icon = "github", url = "https://github.com/kiran-supra" },
-]
 menu = [
     { name = "CV", url = "/cv", weight = 2 },
     { name = "Blockchain", url = "/blockchain", weight = 3 },
