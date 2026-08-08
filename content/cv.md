@@ -2,6 +2,7 @@
 title = "Curriculum Vitae"
 template = "cv.html"
 insert_anchor_links = "none"
+draft = true
 +++
 
 <div style="text-align:center;">
@@ -27,8 +28,10 @@ Experienced in researching and working with **EVM internals**, **light clients**
 ### **Supra: Senior Blockchain Engineer**
 
 *Sep 2024 – Present*
-* Built the **first trustless bridge with MoveVM as the destination execution environment [(HyperNova)](https://supranova.ai/)**, leading end-to-end research and development for the BSC<->SUPRA bridge.
+* Building **HEMVM**, a **heterogeneous blockchain framework for interoperable virtual machines**, for Supra.
+* Worked on **REVM integration** for Supra and implemented **VM-routing methodologies**.
 
+* **Led the bridge team at Supra.** Built the **first trustless bridge with MoveVM as the destination execution environment [(HyperNova)](https://supranova.ai/)**, leading end-to-end research and development and audit management for the bridge.
 * Conducted in-depth research on **EVM execution**, **light clients**, and **Ethereum sync committees** to inform protocol and system design.
 * Prototyped and built **HyperNova end-to-end**, translating research into a **production-grade interoperability system**.
 * Wrote the **entire Rust codebase independently**, owning core logic, networking, cryptography integration, and performance-critical paths.
@@ -37,11 +40,10 @@ Experienced in researching and working with **EVM internals**, **light clients**
 * Designed and implemented the **complete fee model**, including **on-chain verification logic in Move** to ensure correctness and safety.
 * Implemented **live configuration updates** for relayer components, enabling runtime changes **without service downtime**.
 * Performed **security review and auditing of Move smart contracts**, focusing on correctness, invariants, and attack surface reduction.
-* Designed and executed **comprehensive testing strategies** for bridge components, including **unit tests, invariant tests, fuzzing, and end-to-end (E2E) tests** under adversarial conditions.
 * Contributed to extending **Supra’s Move layer** by implementing **native functions** required to support bridge operations efficiently and safely.
 * Refactored **MoveVM native code** to make the chain compatible with bridge operations.
 
-**Skills:** Cryptography, Rust, EVM and lightclients, Move, Solidity, RabbitMQ
+**Skills:** Cryptography, Rust, HEMVM, EVM and lightclients, Move, Solidity, RabbitMQ
 
 ---
 
