@@ -1,7 +1,7 @@
 +++
 title = "Hyperledger Explained: Enterprise Blockchain, Fabric, Besu, and How It Differs from Public Chains"
 date = 2026-10-25
-draft = true
+draft = false
 description = "A complete guide to Hyperledger in 2026: how it is governed, every major project, how permissioned enterprise blockchains differ from Bitcoin, Ethereum, Solana and Corda, deep dives into Hyperledger Fabric and Hyperledger Besu with code, and a security review checklist."
 [taxonomies]
 tags = ["blockchain", "hyperledger", "hyperledger-fabric", "hyperledger-besu", "enterprise-blockchain", "permissioned-blockchain", "dlt", "ethereum", "solidity", "consensus", "qbft", "smart-contracts"]
