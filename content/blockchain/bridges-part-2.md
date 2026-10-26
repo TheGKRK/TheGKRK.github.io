@@ -1,6 +1,6 @@
 +++
 title = "Bridges Part 2: Intent-Based Bridges and Atomic Swaps"
-date = 2026-04-23
+date = 2026-07-12
 description = "How intent-based bridges work, using Across Protocol as the baseline and Eco Protocol's Routes system as a contrasting design, then a comparison with the older HTLC atomic swap primitive."
 [taxonomies]
 tags = ["blockchain", "bridges", "interoperability", "cross-chain", "intents", "atomic-swaps", "htlc", "defi"]
